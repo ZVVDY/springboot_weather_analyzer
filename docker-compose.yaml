@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  db:
+    ports:
+      - "3307:3306"
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_PASSWORD: admin
+      MYSQL_USER: root
+      MYSQL_DATABASE: weather_db
+    volumes:
+      - database-data:/var/lib/weather_db
