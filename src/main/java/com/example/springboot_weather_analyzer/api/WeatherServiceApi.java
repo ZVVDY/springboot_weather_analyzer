@@ -9,14 +9,13 @@ import com.example.springboot_weather_analyzer.entity.Weather;
 import com.example.springboot_weather_analyzer.repository.WeatherRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.concurrent.*;
+import java.time.LocalDateTime;
 
 
 @Slf4j
@@ -65,6 +64,7 @@ public class WeatherServiceApi {
         weather.setPressure(currentDto.getPressureMb());
         weather.setTemperature(currentDto.getTempC());
         weather.setWindSpeed(currentDto.getWindKph() * 1000);
+        weather.setTimestamp(LocalDateTime.now());
         weather.setLocation(location);
         weatherRepository.save(weather);
         System.out.println(" Send to DB: " + weather);

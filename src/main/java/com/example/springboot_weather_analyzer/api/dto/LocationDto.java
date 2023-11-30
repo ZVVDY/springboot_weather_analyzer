@@ -1,5 +1,7 @@
 package com.example.springboot_weather_analyzer.api.dto;
 
+import com.example.springboot_weather_analyzer.api.util.CustomLocalDateTimeDeserializer;
+import com.example.springboot_weather_analyzer.api.util.CustomLocalDateTimeSerializer;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,8 +31,7 @@ public class LocationDto {
     private String country;
 
     @JsonProperty("localtime")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @JsonSerialize(using = CustomLocalDateTimeSerializer.class)
+    @JsonDeserialize(using = CustomLocalDateTimeDeserializer.class)
     private LocalDateTime localtime;
 }
