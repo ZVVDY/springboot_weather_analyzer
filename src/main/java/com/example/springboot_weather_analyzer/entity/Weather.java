@@ -1,26 +1,22 @@
 package com.example.springboot_weather_analyzer.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Data
 public class Weather {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String city;
-    private LocalDateTime timestamp;
-    private Double temperature;
-    private Double windSpeed;
-    private Double pressure;
-    private Double humidity;
+    private double temperature;
+    private double windSpeed;
+    private double pressure;
+    private double humidity;
     private String conditions;
-    private String location;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
+    private Location location;
 }

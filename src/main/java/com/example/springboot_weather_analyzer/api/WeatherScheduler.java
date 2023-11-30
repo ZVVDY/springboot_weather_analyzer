@@ -1,22 +1,33 @@
 package com.example.springboot_weather_analyzer.api;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.*;
 
 @Component
 public class WeatherScheduler {
-    private final WeatherServiceApi weatherServiceApi;
+    private WeatherServiceApi weatherServiceApi;
 
-    @Autowired
     public WeatherScheduler(WeatherServiceApi weatherServiceApi) {
         this.weatherServiceApi = weatherServiceApi;
     }
 
-    @Scheduled(fixedRateString = "${weather.api.fetch.interval}")
-    public void fetchWeatherData() {
+    @PostConstruct
+    public void simulateSensorData() {
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        ScheduledFuture<?> scheduledFuture = executorService.scheduleAtFixedRate(() -> {
+            try {
+                weatherServiceApi.retrieveDataFromApi("Minsk");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, 0, 1, TimeUnit.MINUTES);
 
-        //Weather weather = weatherServiceApi.getWeatherData("City");
-
+        if (executorService instanceof ScheduledThreadPoolExecutor) {
+            ScheduledThreadPoolExecutor stpe = (ScheduledThreadPoolExecutor) executorService;
+            Runtime.getRuntime().addShutdownHook(new Thread(stpe::shutdown));
+        }
     }
+
 }
