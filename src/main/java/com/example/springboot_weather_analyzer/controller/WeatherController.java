@@ -1,17 +1,12 @@
 package com.example.springboot_weather_analyzer.controller;
 
 import com.example.springboot_weather_analyzer.dto.WeatherDto;
-import com.example.springboot_weather_analyzer.entity.Weather;
 import com.example.springboot_weather_analyzer.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -30,14 +25,11 @@ public class WeatherController {
         return new ResponseEntity<>(weatherDto, HttpStatus.OK);
     }
 
-    @GetMapping("/average")
-    public ResponseEntity<Map<String, Double>> getAverageTemperature(
-            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate from,
-            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate to) {
-
-        double averageTemperature = weatherService.calculateAverageTemperature(from, to);
-        Map<String, Double> response = new HashMap<>();
-        response.put("averageTemperature", averageTemperature);
+    @PostMapping("/average")
+    public ResponseEntity<Map<String, Double>> getAverageTemperature(@RequestBody Map<String, String> requestParams) {
+        String from = requestParams.get("from");
+        String to = requestParams.get("to");
+        Map<String, Double> response = weatherService.calculateAverageTemperature(from, to);
         return ResponseEntity.ok(response);
     }
 }

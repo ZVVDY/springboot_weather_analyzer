@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 public class WeatherServiceImpl implements WeatherService {
@@ -43,9 +43,12 @@ public class WeatherServiceImpl implements WeatherService {
         throw new NoSuchElementException("No weather data available");
     }
 
-    public double calculateAverageTemperature(LocalDate fromDate, LocalDate toDate) {
+    public Map<String, Double> calculateAverageTemperature(String from, String to) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime fromDate = LocalDate.parse(from, formatter).atStartOfDay();
+        LocalDateTime toDate = LocalDate.parse(to, formatter).atTime(LocalTime.MAX);
         List<Weather> weatherList = weatherRepository.findByTimestampBetween(fromDate, toDate);
-
+        Map<String, Double> response = new HashMap<>();
         if (weatherList.isEmpty()) {
             //throw new NoWeatherDataException("No weather data available for the specified period");
         }
@@ -54,6 +57,8 @@ public class WeatherServiceImpl implements WeatherService {
         for (Weather weather : weatherList) {
             sumTemperature += weather.getTemperature();
         }
-        return sumTemperature / weatherList.size();
+        double averageTemperature = sumTemperature / weatherList.size();
+        response.put("average_temperature", averageTemperature);
+        return response;
     }
 }
