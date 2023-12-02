@@ -24,12 +24,15 @@ import java.util.*;
 @Slf4j
 public class WeatherServiceImpl implements WeatherService {
 
-    private WeatherRepository weatherRepository;
+    private final WeatherRepository weatherRepository;
     private static final Logger logger = (Logger) LoggerFactory.getLogger(WeatherServiceImpl.class);
     public WeatherServiceImpl(WeatherRepository weatherRepository) {
         this.weatherRepository = weatherRepository;
     }
 
+    public Logger getLogger() {
+        return logger;
+    }
     @Override
     public WeatherDto getMostRecentWeather() {
         try {
@@ -54,7 +57,7 @@ public class WeatherServiceImpl implements WeatherService {
                 );
             } else {
                 logger.warn("No weather data available");
-                throw new NoSuchElementException("No weather data available");
+                throw new NoWeatherDataException("No weather data available");
             }
         } catch (Exception e) {
             logger.error("An error occurred while retrieving the most recent weather data", e);
