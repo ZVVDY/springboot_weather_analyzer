@@ -2,6 +2,8 @@ package com.example.springboot_weather_analyzer.controller;
 
 import com.example.springboot_weather_analyzer.dto.WeatherDto;
 import com.example.springboot_weather_analyzer.service.WeatherService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/weather")
 public class WeatherController {
+
+    private static final Logger logger = LoggerFactory.getLogger(WeatherController.class);
+
     private final WeatherService weatherService;
 
     @Autowired
@@ -21,15 +26,28 @@ public class WeatherController {
 
     @GetMapping("/current")
     public ResponseEntity<WeatherDto> getCurrentWeather() {
-        WeatherDto weatherDto = weatherService.getMostRecentWeather();
-        return new ResponseEntity<>(weatherDto, HttpStatus.OK);
+        try {
+            WeatherDto weatherDto = weatherService.getMostRecentWeather();
+            return new ResponseEntity<>(weatherDto, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("An error occurred while getting current weather", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/average")
     public ResponseEntity<Map<String, Double>> getAverageTemperature(@RequestBody Map<String, String> requestParams) {
-        String from = requestParams.get("from");
-        String to = requestParams.get("to");
-        Map<String, Double> response = weatherService.calculateAverageTemperature(from, to);
-        return ResponseEntity.ok(response);
+        try {
+            String from = requestParams.get("from");
+            String to = requestParams.get("to");
+            Map<String, Double> response = weatherService.calculateAverageTemperature(from, to);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            logger.warn("Invalid request parameters", e);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            logger.error("An error occurred while calculating average temperature", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
