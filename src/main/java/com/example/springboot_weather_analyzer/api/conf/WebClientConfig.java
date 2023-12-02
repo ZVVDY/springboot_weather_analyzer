@@ -1,4 +1,4 @@
-package com.example.springboot_weather_analyzer.api;
+package com.example.springboot_weather_analyzer.api.conf;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

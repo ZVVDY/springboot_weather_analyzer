@@ -1,16 +1,18 @@
-package com.example.springboot_weather_analyzer.api;
+package com.example.springboot_weather_analyzer.api.util;
 
+import com.example.springboot_weather_analyzer.api.service.WeatherServiceApi;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.*;
-
-import static com.example.springboot_weather_analyzer.api.conf.ApiConst.NAME_CITY;
 
 @Component
 public class WeatherScheduler {
     private WeatherServiceApi weatherServiceApi;
 
+    @Value("${weather.api.city}")
+    private String NAME_CITY;
     public WeatherScheduler(WeatherServiceApi weatherServiceApi) {
         this.weatherServiceApi = weatherServiceApi;
     }
@@ -24,7 +26,7 @@ public class WeatherScheduler {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, 0, 1, TimeUnit.MINUTES);
+        }, 0, 10, TimeUnit.MINUTES);
 
         if (executorService instanceof ScheduledThreadPoolExecutor) {
             ScheduledThreadPoolExecutor stpe = (ScheduledThreadPoolExecutor) executorService;

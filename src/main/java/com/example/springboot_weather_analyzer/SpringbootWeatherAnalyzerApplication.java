@@ -1,6 +1,5 @@
 package com.example.springboot_weather_analyzer;
 
-import com.example.springboot_weather_analyzer.api.WeatherServiceApi;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
