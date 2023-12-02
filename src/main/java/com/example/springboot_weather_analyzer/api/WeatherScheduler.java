@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.*;
 
+import static com.example.springboot_weather_analyzer.api.conf.ApiConst.NAME_CITY;
+
 @Component
 public class WeatherScheduler {
     private WeatherServiceApi weatherServiceApi;
@@ -18,7 +20,7 @@ public class WeatherScheduler {
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
         ScheduledFuture<?> scheduledFuture = executorService.scheduleAtFixedRate(() -> {
             try {
-                weatherServiceApi.retrieveDataFromApi("Minsk");
+                weatherServiceApi.retrieveDataFromApi(NAME_CITY);
             } catch (Exception e) {
                 e.printStackTrace();
             }

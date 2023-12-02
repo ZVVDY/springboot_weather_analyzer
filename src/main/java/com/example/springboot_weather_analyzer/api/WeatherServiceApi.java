@@ -17,12 +17,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
 
+import static com.example.springboot_weather_analyzer.api.conf.ApiConst.API_KEY;
+import static com.example.springboot_weather_analyzer.api.conf.ApiConst.API_URL;
+
 
 @Slf4j
 @Service
 public class WeatherServiceApi {
-    private final String apiUrl = "https://weatherapi-com.p.rapidapi.com/forecast.json";
-    private final String apiKey = "d6a9f167c3msh1f62a36dc6ab967p1464d7jsnff8b43aec92b";
+
     private WeatherRepository weatherRepository;
     private WebClient webClient;
 
@@ -32,11 +34,11 @@ public class WeatherServiceApi {
     }
 
     public void retrieveDataFromApi(String city) throws JsonProcessingException {
-        String apiUrlWithParams = apiUrl + "?q=" + city;
+        String apiUrlWithParams = API_URL + "?q=" + city;
 
         String responseBody = webClient.get()
                 .uri(apiUrlWithParams)
-                .header("X-RapidAPI-Key", apiKey)
+                .header("X-RapidAPI-Key", API_KEY)
                 .header("X-RapidAPI-Host", "weatherapi-com.p.rapidapi.com")
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .retrieve()

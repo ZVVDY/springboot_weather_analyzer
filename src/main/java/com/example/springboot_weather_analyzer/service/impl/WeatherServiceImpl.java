@@ -61,4 +61,5 @@ public class WeatherServiceImpl implements WeatherService {
         response.put("average_temperature", averageTemperature);
         return response;
     }
+
 }
