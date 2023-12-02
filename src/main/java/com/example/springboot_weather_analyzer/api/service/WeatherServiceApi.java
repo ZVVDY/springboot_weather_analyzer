@@ -55,41 +55,51 @@ public class WeatherServiceApi {
             WeatherDataDto weatherDataDto = objectMapper.readValue(responseBody, WeatherDataDto.class);
             dataConversionAndSummarization(weatherDataDto);
         } catch (JsonProcessingException e) {
-            log.error("Error processing JSON response from API", e);
-        } catch (
-                WebClientResponseException.NotFound notFoundException) {
+            log.error("Error processing JSON response from API.", e);
+        } catch (WebClientResponseException.NotFound notFoundException) {
             log.error("Data not found for the specified city: {}", city);
         } catch (Exception e) {
-            log.error("An unexpected error occurred while retrieving data from API", e);
+            log.error("An unexpected error occurred while retrieving data from API. Error type: {}", e.getClass().getName(), e);
         }
     }
 
 
     public void dataConversionAndSummarization(WeatherDataDto weatherDataDto) {
         try {
-            ConditionDto conditionDto = weatherDataDto.getCurrent().getConditionDto();
-            LocationDto locationDto = weatherDataDto.getLocation();
-            CurrentDto currentDto = weatherDataDto.getCurrent();
-            Location location = new Location();
-            location.setCountry(locationDto.getCountry());
-            location.setName(locationDto.getName());
-            location.setRegion(locationDto.getRegion());
-            location.setLocalDateTime(locationDto.getLocaltime());
+            if (weatherDataDto != null && weatherDataDto.getCurrent() != null) {
+                CurrentDto currentDto = weatherDataDto.getCurrent();
+                ConditionDto conditionDto = currentDto.getConditionDto();
+                LocationDto locationDto = weatherDataDto.getLocation();
 
-            Weather weather = new Weather();
-            weather.setConditions(conditionDto.getText());
-            weather.setHumidity(currentDto.getHumidity());
-            weather.setPressure(currentDto.getPressureMb());
-            weather.setTemperature(currentDto.getTempC());
-            weather.setWindSpeed(currentDto.getWindKph() * 1000);
-            weather.setTimestamp(LocalDateTime.now());
-            weather.setLocation(location);
-            weatherRepository.save(weather);
-            log.info("Weather data saved to DB: {}", weather);
+                if (conditionDto != null && locationDto != null) {
+                    Location location = new Location();
+                    location.setCountry(locationDto.getCountry());
+                    location.setName(locationDto.getName());
+                    location.setRegion(locationDto.getRegion());
+                    location.setLocalDateTime(locationDto.getLocaltime());
+
+                    Weather weather = new Weather();
+                    weather.setConditions(conditionDto.getText());
+                    weather.setHumidity(currentDto.getHumidity());
+                    weather.setPressure(currentDto.getPressureMb());
+                    weather.setTemperature(currentDto.getTempC());
+                    weather.setWindSpeed(currentDto.getWindKph() * 1000);
+                    weather.setTimestamp(LocalDateTime.now());
+                    weather.setLocation(location);
+
+                    weatherRepository.save(weather);
+                    log.info("Weather data saved to DB: {}", weather);
+                } else {
+                    log.warn("ConditionDto or LocationDto is null. Check if the data comes from the API server.");
+                }
+            } else {
+                log.warn("WeatherDataDto or CurrentDto is null");
+            }
         } catch (Exception e) {
             log.error("An unexpected error occurred during data conversion and summarization", e);
         }
     }
+
 }
 
 

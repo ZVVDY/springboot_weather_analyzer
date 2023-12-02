@@ -18,7 +18,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -26,13 +29,11 @@ public class WeatherServiceImpl implements WeatherService {
 
     private final WeatherRepository weatherRepository;
     private static final Logger logger = (Logger) LoggerFactory.getLogger(WeatherServiceImpl.class);
+
     public WeatherServiceImpl(WeatherRepository weatherRepository) {
         this.weatherRepository = weatherRepository;
     }
 
-    public Logger getLogger() {
-        return logger;
-    }
     @Override
     public WeatherDto getMostRecentWeather() {
         try {

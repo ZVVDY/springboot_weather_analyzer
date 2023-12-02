@@ -26,7 +26,7 @@ public class WeatherScheduler {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, 0, 1, TimeUnit.MINUTES);
+        }, 0, 10, TimeUnit.MINUTES);
 
         if (executorService instanceof ScheduledThreadPoolExecutor) {
             ScheduledThreadPoolExecutor stpe = (ScheduledThreadPoolExecutor) executorService;
