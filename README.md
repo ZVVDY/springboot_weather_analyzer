@@ -93,37 +93,15 @@ The response will contain the average temperature and other relevant information
 
 
 Database Schema
-The application uses a MySQL database with the following schema:
+The application uses a MySQL database:
 
-location table
+set the parameter to create database tables:
+spring.jpa.hibernate.ddl-auto=create
 
-id (BIGINT, PRIMARY KEY, AUTO_INCREMENT)
+or copy the create.sql script to src\main\resources\. 
 
-name (VARCHAR(255), NOT NULL)
-
-region (VARCHAR(255))
-
-country (VARCHAR(255))
-
-local_date_time (DATETIME)
-
-weather table
-
-id (BIGINT, PRIMARY KEY, AUTO_INCREMENT)
-
-temperature (DOUBLE, NOT NULL)
-
-wind_speed (DOUBLE, NOT NULL)
-
-pressure (DOUBLE, NOT NULL)
-
-humidity (DOUBLE, NOT NULL)
-
-conditions (VARCHAR(255), NOT NULL)
-
-timestamp (DATETIME, NOT NULL)
-
-location_id (BIGINT, FOREIGN KEY referencing location.id)
+After creating the tables, you need to change the parameters in
+spring.jpa.hibernate.ddl-auto=update
 
 
 Error Handling and Logging
