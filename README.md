@@ -51,7 +51,7 @@ The response will include the following information:
 
 To calculate the average daily temperature for a specified period, make a POST request to the following endpoint:
 
-## GET /api/weathe/current
+### GET /api/weathe/current
 
 
 The response will contain the following information:
@@ -67,7 +67,7 @@ The response will contain the following information:
 
 To calculate the average daily temperature for a specified period, make a POST request to the following endpoint:
 
-## POST /api/weather/average
+### POST /api/weather/average
 
 ### The request body should be in JSON format and include the from and to dates:
 
@@ -87,15 +87,13 @@ spring.jpa.hibernate.ddl-auto=create
 or copy the create.sql script to src\main\resources\. 
 
 After creating the tables, you need to change the parameters in
-```bash
-spring.jpa.hibernate.ddl-auto=update
 
+spring.jpa.hibernate.ddl-auto=update
 
 ### Error Handling and Logging
 
 The application includes robust error handling and logging for better traceability. 
 Any errors or exceptions encountered during the execution of API requests are logged with detailed information.
-
 
 ### Unit Tests
 The project includes a comprehensive set of unit tests to ensure the correctness and reliability of the 
