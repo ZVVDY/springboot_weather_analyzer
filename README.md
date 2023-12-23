@@ -50,7 +50,7 @@ The response will include the following information:
 ### Endpoint 2: Average Daily Temperature
 
 To calculate the average daily temperature for a specified period, make a POST request to the following endpoint:
-
+```bash
 GET /api/weathe/current
 
 
@@ -66,10 +66,11 @@ The response will contain the following information:
 ### Endpoint 2: Average Daily Temperature
 
 To calculate the average daily temperature for a specified period, make a POST request to the following endpoint:
-
+```bash
 POST /api/weather/average
 
 ### The request body should be in JSON format and include the from and to dates:
+```bash
 {
     "from": "2023-11-31",
     "to": "2023-12-01"
@@ -86,6 +87,7 @@ spring.jpa.hibernate.ddl-auto=create
 or copy the create.sql script to src\main\resources\. 
 
 After creating the tables, you need to change the parameters in
+```bash
 spring.jpa.hibernate.ddl-auto=update
 
 
