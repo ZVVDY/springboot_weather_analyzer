@@ -1,30 +1,30 @@
 package com.example.springboot_weather_analyzer.service;
 
+import com.example.springboot_weather_analyzer.dto.LocationDto;
 import com.example.springboot_weather_analyzer.dto.WeatherDto;
 import com.example.springboot_weather_analyzer.entity.Location;
 import com.example.springboot_weather_analyzer.entity.Weather;
 import com.example.springboot_weather_analyzer.exception.NoWeatherDataException;
+import com.example.springboot_weather_analyzer.exception.WeatherDataRetrievalException;
 import com.example.springboot_weather_analyzer.repository.WeatherRepository;
 import com.example.springboot_weather_analyzer.service.impl.WeatherServiceImpl;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 @SpringBootTest
-@Slf4j
 public class WeatherServiceImplTest {
 
     @Mock
@@ -33,34 +33,52 @@ public class WeatherServiceImplTest {
     @InjectMocks
     private WeatherServiceImpl weatherService;
 
-    @Before
-    public void setUp() {
-        weatherRepository = mock(WeatherRepository.class);
-        weatherService = new WeatherServiceImpl(weatherRepository);
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.initMocks(this);
     }
 
     @Ignore
-    public void testGetMostRecentWeather() {
-        LocalDateTime dateTime = LocalDateTime.of(2023, 11, 30, 0, 0);
-        Location location = new Location(1L, "Minsk", "Minsk", "Belarus", dateTime);
-        Weather weather = new Weather(1L, -5.0, 22000.0, 1010.0, 50.0, "Clear", dateTime, location);
-        when(weatherRepository.findTopByOrderByTimestampDesc()).thenReturn(Optional.empty());
-        WeatherDto weatherDto = weatherService.getMostRecentWeather();
-        assertNotNull(weatherDto);
-        assertThrows(NoWeatherDataException.class, () -> weatherService.getMostRecentWeather());
-        assertEquals(-5.0, weatherDto.getTemperature());
-        assertEquals(22000.0, weatherDto.getWindSpeed());
-        assertEquals(1010.0, weatherDto.getPressure());
-        assertEquals(50.0, weatherDto.getHumidity());
-        assertEquals("Clear", weatherDto.getConditions());
-        assertNotNull(weatherDto.getLocationDto());
-        assertEquals("Minsk", weatherDto.getLocationDto().getName());
-        assertEquals("Minsk", weatherDto.getLocationDto().getRegion());
-        assertEquals("Belarus", weatherDto.getLocationDto().getCountry());
-        assertEquals(dateTime, weatherDto.getLocationDto().getLocalDateTime());
-        verify(weatherRepository, times(1)).findTopByOrderByTimestampDesc();
+    void testGetMostRecentWeather() {
+        Location location = new Location(1L, "Minsk", "Minsk",
+                "Belarus", LocalDateTime.now());
+        Weather weather = new Weather();
+        weather.setId(1L);
+        weather.setWindSpeed(22000);
+        weather.setConditions("Sunny");
+        weather.setTemperature(-5);
+        weather.setPressure(1010.0);
+        weather.setTimestamp(LocalDateTime.now());
+        weather.setHumidity(60.0);
+        weather.setLocation(location);
+        when(weatherRepository.findTopByOrderByTimestampDesc()).thenReturn(Optional.of(weather));
+        WeatherDto result = weatherService.getMostRecentWeather();
+        assertNotNull(result);
+        assertEquals(-5, result.getTemperature());
+        assertEquals(22000, result.getWindSpeed());
+        assertEquals(1010.0, result.getPressure());
+        assertEquals(60.0, result.getHumidity());
+        assertEquals("Sunny", result.getConditions());
+        assertEquals("Minsk", result.getLocationDto().getName());
     }
+
+    @Ignore
+    void testCalculateAverageTemperature() {
+        //Weather weather1 = new Weather(1L, 20.0, 5.0, 1000.0, 50.0, "Cloudy", new Location());
+        //Weather weather2 = new Weather(2L, 30.0, 10.0, 1020.0, 70.0, "Rainy", new Location());
+        List<Weather> weatherList = new ArrayList<>();
+        //weatherList.add(weather1);
+        //weatherList.add(weather2);
+        when(weatherRepository.findByTimestampBetween(any(), any())).thenReturn(weatherList);
+        var result = weatherService.calculateAverageTemperature("2023-11-30", "2023-12-01");
+        assertNotNull(result);
+        assertTrue(result.containsKey("average_temperature"));
+        assertEquals(25.0, result.get("average_temperature"));
+    }
+
     @Test
-    public void testCalculateAverageTemperature() {
+    void testCalculateAverageTemperatureNoData() {
+        when(weatherRepository.findByTimestampBetween(any(), any())).thenReturn(new ArrayList<>());
+        assertThrows(NoWeatherDataException.class, () -> weatherService.calculateAverageTemperature("2023-11-30", "2023-12-01"));
     }
 }

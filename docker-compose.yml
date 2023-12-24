@@ -1,21 +1,29 @@
-version: '3'
-services:
-  app:
-    image: springboot_weather_analyzer:latest
-    ports:
-      - "8081:8081"
-    depends_on:
-      - db
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3307/weather_db
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: admin
+version: '3.1'
 
-  db:
-    image: mysql:latest
+services:
+
+  mysql:
+    image: 'mysql:latest'
+    restart: always
     ports:
-      - "3308:3307"
+      - '3308:3306'
     environment:
-      MYSQL_DATABASE: weather_db
-      MYSQL_USER: root
-      MYSQL_PASSWORD: admin
+      - MYSQL_ROOT_PASSWORD=admin
+      - MYSQL_DATABASE=weather_db
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+
+  weather_app:
+    image: 'springboot_weather_analyzer-image'
+    build:
+      context: .
+    container_name: weather_app
+    depends_on:
+      - mysql
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/weather_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=admin
+    ports:
+      - '8082:8082'
+
